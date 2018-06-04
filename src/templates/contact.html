@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+
+{% block content %}
+{% block head_title %}Contact || {{block.super}}{% endblock head_title%}
+  <h1>Contact</h1>
+
+{% include 'snippets/sidebar.html' %}
+
+<a href="mailto:youremail@gmail.com"></a>
+
+{% endblock content %}

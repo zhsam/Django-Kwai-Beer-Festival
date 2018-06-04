@@ -1,4 +1,4 @@
-"""beerfestival URL Configuration
+"""muypicky URL Configuration
 The `urlpatterns` list routes URLs to views. For more information please see:
     https://docs.djangoproject.com/en/1.11/topics/http/urls/
 Examples:
@@ -14,23 +14,7 @@ Including another URLconf
 """
 from django.conf.urls import url
 from django.contrib import admin
-from django.views.generic import TemplateView
-
-from bars.views import (
-    bars_listview,
-    BarListView,
-    BarDetailView,
-    BarsCreateView
-)
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
-    url(r'^$', TemplateView.as_view(template_name='home.html')),
-    url(r'^bars/$', BarListView.as_view()),
-    url(r'^bars/create/$', BarsCreateView.as_view()),
-    url(r'^bars/(?P<slug>[\w-]+)/$', BarDetailView.as_view()),
-    # url(r'^bars/(?P<bar_id>\w+)$', BarDetailView.as_view()),
-    # url(r'^bars/asian/$', AsianFusionBarListView.as_view()),
-    url(r'^about/$', TemplateView.as_view(template_name='about.html')),
-    url(r'^contact/(?P<id>\d+)/$', TemplateView.as_view(template_name='contact.html')),
 ]
