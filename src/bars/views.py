@@ -1,3 +1,5 @@
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Q
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404
@@ -50,21 +52,19 @@ from .models import BarsLocation
 #         return render(request, "contact.html", context)
 
 
+@login_required(login_url='/login/')
 # function based view
 def bars_createview(request):
     form = BarsLocationCreateForm(request.POST or None)
     errors = None
     if form.is_valid():
-        # Customize
-        # like a pre_save
-        form.save()
-        # like a post_save
-        # obj = BarsLocation.objects.create(
-        #     name = form.cleaned_data.get('name'),
-        #     location = form.cleaned_data.get('location'),
-        #     category = form.cleaned_data.get('category')
-        #     )
-        return HttpResponseRedirect("/bars/")
+        if request.user.is_authenticated():
+            instance = form.save(commit=False)
+            instance.owner = request.user
+            instance.save()
+            return HttpResponseRedirect("/bars/")
+        else:
+            return HttpResponseRedirect("/login/")
     if form.errors:
         errors = form.errors
 
@@ -116,7 +116,13 @@ class BarDetailView(DetailView):
     #     obj = get_object_or_404(BarsLocation, id = bar_id) # pk = bar_id
     #     return obj
 
-class BarsCreateView(CreateView):
+class BarsCreateView(LoginRequiredMixin, CreateView):
     form_class = BarsLocationCreateForm
+    login_url = '/login/'
     template_name = 'bars/form.html'
     success_url = '/bars/'
+
+    def form_valid(self, form):
+        instance = form.save(commit=False)
+        instance.owner = request.user
+        return super(BarsCreateView, self).form_valid(form)
